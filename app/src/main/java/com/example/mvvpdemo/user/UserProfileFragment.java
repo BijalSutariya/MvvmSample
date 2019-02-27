@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import com.example.mvvpdemo.R;
 import com.example.mvvpdemo.model.User;
 
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -33,10 +35,10 @@ public class UserProfileFragment extends Fragment {
     }
 
     private void observeViewModel(UserProfileViewModel viewModel) {
-        viewModel.getUserDetails().observe(this, new Observer<User>() {
+        viewModel.getUserDetails().observe(this, new Observer<List<User>>() {
             @Override
-            public void onChanged(@Nullable User user) {
-                Log.d("TAG", "onChanged: "+user.toString());
+            public void onChanged(@Nullable List<User> users) {
+                Log.d("TAG", "onChanged: "+users.toString());
             }
         });
     }

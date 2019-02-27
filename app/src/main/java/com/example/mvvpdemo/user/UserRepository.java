@@ -5,6 +5,8 @@ import android.arch.lifecycle.MutableLiveData;
 
 import com.example.mvvpdemo.model.User;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,19 +34,35 @@ public class UserRepository {
         return userRepository;
     }
 
-        public LiveData<User> getUser(int userId){
-            final MutableLiveData<User> data = new MutableLiveData<>();
-            webservice.getUser(userId).enqueue(new Callback<User>() {
-                @Override
-                public void onResponse(Call<User> call, Response<User> response) {
-                    data.setValue(response.body());
-                }
+    /*public LiveData<User> getUser(int userId) {
+        final MutableLiveData<User> data = new MutableLiveData<>();
+        webservice.getUser(userId).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                data.setValue(response.body());
+            }
 
-                @Override
-                public void onFailure(Call<User> call, Throwable t) {
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
 
-                }
-            });
-            return data;
-        }
+            }
+        });
+        return data;
+    }*/
+
+    public LiveData<List<User>> getUser() {
+        final MutableLiveData<List<User>> data = new MutableLiveData<>();
+        webservice.getUser().enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                data.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+
+            }
+        });
+        return data;
     }
+}

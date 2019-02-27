@@ -8,15 +8,17 @@ import android.content.Context;
 
 import com.example.mvvpdemo.model.User;
 
+import java.util.List;
+
 public class UserProfileViewModel extends AndroidViewModel {
-    private LiveData<User> user;
+    private LiveData<List<User>> user;
 
     public UserProfileViewModel(Application application) {
         super(application);
-        user = UserRepository.getInstance().getUser(10); //pass id
+        user = UserRepository.getInstance().getUser(); //pass id
     }
 
-    public LiveData<User> getUserDetails(){
+    LiveData<List<User>> getUserDetails(){
         return user;
     }
 }
