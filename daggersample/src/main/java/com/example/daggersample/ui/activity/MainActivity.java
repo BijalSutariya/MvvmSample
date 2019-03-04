@@ -3,13 +3,11 @@ package com.example.daggersample.ui.activity;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SnapHelper;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,7 +20,6 @@ import com.example.daggersample.databinding.MainActivityBinding;
 import com.example.daggersample.databinding.MoviesListItemBinding;
 import com.example.daggersample.factory.ViewModelFactory;
 import com.example.daggersample.ui.viewmodel.MovieListViewModel;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +27,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjection;
-import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,19 +47,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-
-        /* SnapHelper to change the background of the activity based on the list item
-         * currently visible */
-
         moviesListAdapter = new MoviesListAdapter(this);
-        binding.moviesList.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
+        binding.moviesList.setLayoutManager(new LinearLayoutManager(this));
         binding.moviesList.setAdapter(moviesListAdapter);
-       /* SnapHelper startSnapHelper = new PagerSnapHelper(position -> {
-            MovieEntity movie = moviesListAdapter.getItem(position);
-            binding.overlayLayout.updateCurrentBackground(movie.getPosterPath());
-        });
-        startSnapHelper.attachToRecyclerView(binding.moviesList);*/
-
 
         initialiseViewModel();
     }
@@ -71,15 +57,36 @@ public class MainActivity extends AppCompatActivity {
     private void initialiseViewModel() {
         movieListViewModel = ViewModelProviders.of(this, viewModelFactory).get(MovieListViewModel.class);
 
-        movieListViewModel.getMoviesLiveData().observe(this,listResource -> {
+        movieListViewModel.getMoviesLiveData().observe(this, listResource -> {
 
-                Log.d("TAG", "initialiseViewModel: "+listResource.data.toString());
+            if (listResource.isLoading()) {
+                displayLoader();
 
-              //  displayLoader();
+            } else if (!listResource.data.isEmpty()) {
+                updateMoviesList(listResource.data);
+
+            } else handleErrorResponse();
 
         });
         movieListViewModel.loadMoreMovies();
-       // Log.d("TAG", "initialiseViewModel: "+movieListViewModel.getMoviesLiveData().getValue());
+    }
+
+    private void hideLoader() {
+        binding.moviesList.setVisibility(View.VISIBLE);
+        binding.loaderLayout.rootView.setVisibility(View.GONE);
+    }
+
+    private void handleErrorResponse() {
+        hideLoader();
+        binding.moviesList.setVisibility(View.GONE);
+        binding.emptyLayout.emptyContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void updateMoviesList(List<MovieEntity> movies) {
+        hideLoader();
+        binding.emptyLayout.emptyContainer.setVisibility(View.GONE);
+        binding.moviesList.setVisibility(View.VISIBLE);
+        moviesListAdapter.setItems(movies);
     }
 
     private void displayLoader() {
@@ -124,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull MoviesListAdapter.CustomViewHolder holder, int position) {
-           // holder.bindTo(getItem(position));
+              holder.bindTo(getItem(position));
         }
 
         protected class CustomViewHolder extends RecyclerView.ViewHolder {
@@ -134,16 +141,11 @@ public class MainActivity extends AppCompatActivity {
             public CustomViewHolder(MoviesListItemBinding binding) {
                 super(binding.getRoot());
                 this.binding = binding;
-
-                DisplayMetrics displayMetrics = new DisplayMetrics();
-                activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-                int width = displayMetrics.widthPixels;
-
-                itemView.setLayoutParams(new RecyclerView.LayoutParams(new Float(width * 0.85f).intValue(),
-                        RecyclerView.LayoutParams.WRAP_CONTENT));
             }
 
-
+            public void bindTo(MovieEntity movie) {
+                binding.image.setText(movie.getTitle());
+            }
         }
     }
 

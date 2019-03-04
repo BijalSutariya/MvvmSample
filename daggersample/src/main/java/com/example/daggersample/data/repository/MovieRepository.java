@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import com.example.daggersample.data.remote.api.MovieApiService;
 import com.example.daggersample.data.NetworkBoundResource;
 import com.example.daggersample.data.Resource;
-import com.example.daggersample.data.remote.model.MovieApiResponse;
 import com.example.daggersample.data.local.MovieDao;
 import com.example.daggersample.data.local.MovieEntity;
 
@@ -54,39 +53,8 @@ public class MovieRepository {
                 return movieApiService.fetchMovies()
                         .flatMap(movieEntityList -> Observable.just(movieEntityList == null
                         ?Resource.error("",null):Resource.success(movieEntityList)));
-                        /*.flatMap(movieEntityList -> Observable.just(movieEntityList == null
-                                ? Resource.error("", new MovieEntity())
-                                : Resource.success(movieEntityList)));    */
             }
 
-          /*  @Override
-            protected void saveCallResult(@NonNull MovieApiResponse item) {
-                movieDao.insertMovies(item.getResult());
-            }
-
-            @Override
-            protected boolean shouldFetch() {
-                return true;
-            }
-
-            @NonNull
-            @Override
-            protected Flowable<List<MovieEntity>> loadFromDb() {
-                List<MovieEntity> movieEntities = movieDao.getMoviesByPage();
-                if(movieEntities == null || movieEntities.isEmpty()) {
-                    return Flowable.empty();
-                }
-                return Flowable.just(movieEntities);
-            }
-
-            @NonNull
-            @Override
-            protected Observable<Resource<MovieApiResponse>> createCall() {
-                return movieApiService.fetchMovies()
-                        .flatMap(movieApiResponse -> Observable.just(movieApiResponse == null
-                                ? Resource.error("", new MovieApiResponse())
-                                : Resource.success(movieApiResponse)));
-            }*/
         }.getAsObservable();
     }
 }
