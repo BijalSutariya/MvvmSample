@@ -1,17 +1,31 @@
 package com.example.daggersample.data.remote.model;
 
 import com.example.daggersample.data.local.MovieEntity;
-import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MovieApiResponse {
+
+    private List<MovieEntity> result;
+
     public MovieApiResponse() {
-        this.results = new ArrayList<>();
+        this.result = new ArrayList<>();
     }
 
-    private long page;
+    public List<MovieEntity> getResult() {
+        return result;
+    }
+
+    public void setResult(List<MovieEntity> result) {
+        this.result = result;
+    }
+
+    /* public MovieApiResponse() {
+        this.results = new ArrayList<>();
+    }*/
+
+   /* private long page;
 
     @SerializedName("total_pages")
     private long totalPages;
@@ -51,5 +65,5 @@ public class MovieApiResponse {
 
     public void setResults(List<MovieEntity> results) {
         this.results = results;
-    }
+    }*/
 }

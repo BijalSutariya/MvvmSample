@@ -57,7 +57,7 @@ public class ApiModule {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.cache(cache);
         httpClient.addInterceptor(logging);
-        httpClient.addNetworkInterceptor(new RequestInterceptor());
+        //httpClient.addNetworkInterceptor(new RequestInterceptor());
         httpClient.connectTimeout(30, TimeUnit.SECONDS);
         httpClient.readTimeout(30, TimeUnit.SECONDS);
         return httpClient.build();
@@ -69,7 +69,7 @@ public class ApiModule {
         return new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .baseUrl("https://api.themoviedb.org/3/")
+                .baseUrl("https://jsonplaceholder.typicode.com")
                 .client(okHttpClient)
                 .build();
     }

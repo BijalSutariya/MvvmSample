@@ -17,7 +17,7 @@ public class RequestInterceptor implements Interceptor {
         Request originalRequest = chain.request();
         HttpUrl originalUrl = originalRequest.url();
         HttpUrl url = originalUrl.newBuilder()
-                .addQueryParameter("api_key", BuildConfig.TMDB_API_KEY)
+                .addQueryParameter("api_key", BuildConfig.FLAVOR)
                 .build();
 
         Request.Builder requestBuilder = originalRequest.newBuilder().url(url);
