@@ -1,1 +1,1 @@
-include ':app', ':mvvmdagger', ':daggersample'
+include ':app', ':daggersample'
