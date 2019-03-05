@@ -8,12 +8,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.daggersample.MyClickListener;
 import com.example.daggersample.R;
 import com.example.daggersample.data.local.MovieEntity;
 import com.example.daggersample.databinding.FragmentListBinding;
@@ -28,7 +31,7 @@ import javax.inject.Inject;
 
 import dagger.android.support.AndroidSupportInjection;
 
-public class ListFragment extends Fragment {
+public class ListFragment extends Fragment implements MyClickListener {
 
     @Inject
     ViewModelFactory factory;
@@ -54,7 +57,7 @@ public class ListFragment extends Fragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false);
         view = binding.getRoot();
 
-        moviesListAdapter = new MoviesListAdapter(getActivity());
+        moviesListAdapter = new MoviesListAdapter(getActivity(),this);
         binding.moviesList.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.moviesList.setAdapter(moviesListAdapter);
 
@@ -75,7 +78,6 @@ public class ListFragment extends Fragment {
             } else handleErrorResponse();
 
         });
-        movieListViewModel.loadMoreMovies();
     }
 
     private void hideLoader() {
@@ -100,14 +102,23 @@ public class ListFragment extends Fragment {
         binding.emptyLayout.emptyContainer.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void onMyClick(View view, int position) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.listFragment, DetailsFragment.newInstance(view,position)).addToBackStack(null);
+        fragmentTransaction.commit();
+    }
 
     public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.CustomViewHolder> {
 
+        private MyClickListener listener;
         private Activity activity;
         private List<MovieEntity> movies;
 
-        public MoviesListAdapter(Activity activity) {
+        public MoviesListAdapter(Activity activity,MyClickListener listener) {
             this.activity = activity;
+            this.listener = listener;
             this.movies = new ArrayList<>();
         }
 
@@ -151,6 +162,12 @@ public class ListFragment extends Fragment {
 
             public void bindTo(MovieEntity movie) {
                 binding.image.setText(movie.getTitle());
+                binding.image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        listener.onMyClick(view,getAdapterPosition());
+                    }
+                });
             }
         }
     }

@@ -5,6 +5,8 @@
     <data class="FragmentListBinding" />
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/listFragment"
+        android:background="#ffffff"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

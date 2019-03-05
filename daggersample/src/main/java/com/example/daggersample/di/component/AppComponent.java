@@ -6,6 +6,7 @@ import com.example.daggersample.MyApplication;
 import com.example.daggersample.di.module.ActivityModule;
 import com.example.daggersample.di.module.ApiModule;
 import com.example.daggersample.di.module.DbModule;
+import com.example.daggersample.di.module.DetailsModule;
 import com.example.daggersample.di.module.FragmentModule;
 import com.example.daggersample.di.module.ViewModelModule;
 
@@ -21,6 +22,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
         ViewModelModule.class,
         ActivityModule.class,
         FragmentModule.class,
+        DetailsModule.class,
         AndroidSupportInjectionModule.class})
 @Singleton
 public interface AppComponent {

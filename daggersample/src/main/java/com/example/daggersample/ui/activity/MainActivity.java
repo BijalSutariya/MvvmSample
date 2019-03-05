@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = this.getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.CONTENT_VIEW_ID, ListFragment.newInstance());
+        fragmentTransaction.add(R.id.CONTENT_VIEW_ID, ListFragment.newInstance());
         fragmentTransaction.commit();
     }
 

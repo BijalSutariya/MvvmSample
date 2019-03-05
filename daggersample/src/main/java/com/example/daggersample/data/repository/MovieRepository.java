@@ -1,5 +1,6 @@
 package com.example.daggersample.data.repository;
 
+import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.example.daggersample.data.remote.api.MovieApiService;
@@ -10,51 +11,73 @@ import com.example.daggersample.data.local.MovieEntity;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import retrofit2.Call;
 
 @Singleton
 public class MovieRepository {
     private MovieDao movieDao;
     private MovieApiService movieApiService;
 
+    @Inject
     public MovieRepository(MovieDao movieDao, MovieApiService movieApiService) {
         this.movieDao = movieDao;
         this.movieApiService = movieApiService;
     }
 
-    public Observable<Resource<List<MovieEntity>>> loadMoviesByType() {
-        return new NetworkBoundResource<List<MovieEntity>,List<MovieEntity>>() {
+    public LiveData<Resource<List<MovieEntity>>> loadMoviesByType() {
+        return new NetworkBoundResource<List<MovieEntity>, List<MovieEntity>>() {
             @Override
-            protected void saveCallResult(@NonNull List<MovieEntity> item) {
+            protected void saveCallResult(List<MovieEntity> item) {
                 movieDao.insertMovies(item);
-
-            }
-
-            @Override
-            protected boolean shouldFetch() {
-                return true;
             }
 
             @NonNull
             @Override
-            protected Flowable<List<MovieEntity>> loadFromDb() {
-                List<MovieEntity> movieEntities = movieDao.getMoviesByPage();
-                if(movieEntities == null || movieEntities.isEmpty()) {
-                    return Flowable.empty();
-                }
-                return Flowable.just(movieEntities);            }
+            protected LiveData<List<MovieEntity>> loadFromDb() {
+                return movieDao.getMoviesByPage();
+            }
+
+            @Override
+            protected boolean shouldFetch(List<MovieEntity> data) {
+                return data == null || data.isEmpty() ;
+            }
 
             @NonNull
             @Override
-            protected Observable<Resource<List<MovieEntity>>> createCall() {
-                return movieApiService.fetchMovies()
-                        .flatMap(movieEntityList -> Observable.just(movieEntityList == null
-                        ?Resource.error("",null):Resource.success(movieEntityList)));
+            protected Call<List<MovieEntity>> createCall() {
+                return movieApiService.fetchMovies();
+            }
+        }.getAsLiveData();
+
+    }
+
+    public LiveData<Resource<MovieEntity>> loadOneUser(Integer newMovieId) {
+        return new NetworkBoundResource<MovieEntity, MovieEntity>() {
+            @Override
+            protected void saveCallResult(MovieEntity item) {
+
             }
 
-        }.getAsObservable();
+            @NonNull
+            @Override
+            protected LiveData<MovieEntity> loadFromDb() {
+                return movieDao.getMoviesDetails(newMovieId);
+            }
+
+            @Override
+            protected boolean shouldFetch(MovieEntity data) {
+                return false;
+            }
+
+            @NonNull
+            @Override
+            protected Call<MovieEntity> createCall() {
+                return null;
+            }
+        }.getAsLiveData();
     }
 }

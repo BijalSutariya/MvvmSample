@@ -1,14 +1,18 @@
 package com.example.daggersample.data.remote.api;
 
 import com.example.daggersample.data.local.MovieEntity;
-import com.example.daggersample.data.remote.model.MovieApiResponse;
 
 import java.util.List;
 
 import io.reactivex.Observable;
+import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 public interface MovieApiService {
     @GET("/todos")
-    Observable<List<MovieEntity>> fetchMovies();
+    Call<List<MovieEntity>> fetchMovies();
+
+    @GET("/todos/{id}")
+    Observable<MovieEntity> fetchDetails(@Path("id") int userId);
 }

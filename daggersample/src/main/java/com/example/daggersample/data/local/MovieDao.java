@@ -1,5 +1,6 @@
 package com.example.daggersample.data.local;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -13,5 +14,8 @@ public interface MovieDao {
     long[] insertMovies(List<MovieEntity> movies);
 
     @Query("SELECT * FROM `MovieEntity`")
-    List<MovieEntity> getMoviesByPage();
+    LiveData<List<MovieEntity>> getMoviesByPage();
+
+    @Query("SELECT * FROM MovieEntity WHERE id = :id")
+    LiveData<MovieEntity> getMoviesDetails(int id);
 }
