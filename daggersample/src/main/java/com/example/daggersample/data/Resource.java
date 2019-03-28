@@ -1,6 +1,5 @@
 package com.example.daggersample.data;
 
-import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 

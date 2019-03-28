@@ -28,7 +28,7 @@ public class MovieListViewModel extends ViewModel {
      * */
     @Inject
     public MovieListViewModel(MovieRepository repository) {
-        moviesLiveData = repository.loadMoviesByType();
+        moviesLiveData = repository.loadUsers();
         movieIdLiveData = new MutableLiveData<>();
     }
 
